@@ -5,7 +5,8 @@ set -euo pipefail
 source .buildkite/scripts/common/util.sh
 
 export CODE_COVERAGE=1 # Kibana is bootstrapped differently for code coverage
-
+echo "--- Print KIBANA_DIR"
+echo "### KIBANA_DIR: $KIBANA_DIR"
 .buildkite/scripts/bootstrap.sh
 
 echo "--- Build Platform Plugins"
