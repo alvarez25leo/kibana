@@ -43,6 +43,12 @@ splitMerge() {
 }
 
 listReports() {
-  echo "--- List all under $base"
   ls -R $base
+}
+
+finalReplace() {
+  echo "### KIBANA_DIR in finalReplace fn: $KIBANA_DIR"
+  anchor=LEETRE
+  sed -i '' -e "s|$anchor|${KIBANA_DIR}|g" \
+    target/kibana-coverage/functional/*.json
 }
