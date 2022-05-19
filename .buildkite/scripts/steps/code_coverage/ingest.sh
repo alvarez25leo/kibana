@@ -63,14 +63,23 @@ wc -l $first
 echo "### rest"
 wc -l $target
 
+splitMerge () {
+  echo "--- Merge the first half of the coverage files"
+  firstCombined="${first}-combined"
+  COVERAGE_TEMP_DIR=$first yarn nyc report --nycrc-path \
+    src/dev/code_coverage/nyc_config/nyc.functional.config.js --report-dir $firstCombined
+  mv "${firstCombined}/*.json" $target || echo "--- No coverage files found at ${firstCombined}/*.json"
+  mv "${firstCombined}/**/*.json" $target || echo "--- No coverage files found at ${firstCombined}/**/*.json"
 
-# merge the first half
-firstCombined="${first}-combined"
-COVERAGE_TEMP_DIR=$first yarn nyc report --nycrc-path \
-  src/dev/code_coverage/nyc_config/nyc.functional.config.js --report-dir $firstCombined
-mv "${firstCombined}/*.json" $target || echo "--- No coverage files found at ${firstCombined}/*.json"
-# merge the rest
-yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.functional.config.js
+  echo "--- Merge the rest of the coverage files"
+  yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.functional.config.js
+}
+
+splitMerge
+
+$seached=target/kibana-coverage
+echo "--- Grep for replaced paths, in every folder under $searched, should find none"
+grep -R $KIBANA_DIR $searched
 
 # archive reports to upload as build artifacts
 echo "--- Archive and upload combined reports"
