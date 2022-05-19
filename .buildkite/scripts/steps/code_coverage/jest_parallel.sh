@@ -20,6 +20,8 @@ buildkite-agent artifact download jest_run_order.json .
 #configs=$(jq -r 'getpath([env.TEST_TYPE]) | .groups[env.JOB | tonumber].names | first' jest_run_order.json)
 configs=$(jq -r 'getpath([env.TEST_TYPE]) | .groups[env.JOB | tonumber].names | .[]' jest_run_order.json)
 
+echo "--- Print KIBANA_DIR"
+echo "### KIBANA_DIR: $KIBANA_DIR"
 while read -r config; do
   echo "--- $ node scripts/jest --config $config --coverage --coverageReporters json --coverageDirectory target/kibana-coverage/jest"
 

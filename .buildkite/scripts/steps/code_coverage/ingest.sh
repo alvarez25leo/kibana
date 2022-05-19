@@ -40,46 +40,42 @@ echo "--- collect VCS Info"
 echo "--- Jest: merging coverage files and generating the final combined report"
 yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 
-echo "--- Functional: merging json files and generating the final combined report"
-target=target/kibana-coverage/functional
-first="target/kibana-coverage/first"
-splitCoverage () {
-  count=$(ls $1 | wc -l | xargs) # xargs trims whitespace
-  echo "### total: $count"
-
-  mkdir -p $first
-  half=$(($count / 2))
-  echo "### half: $half"
-
-  for x in $(seq 1 $half); do
-    mv "$1/$(ls $1 | head -1)" $first
-  done
-}
-
-echo "--- Running splitCoverage fn"
-splitCoverage $target
-echo "### first half:"
-wc -l $first
-echo "### rest"
-wc -l $target
-
-splitMerge () {
-  echo "--- Merge the first half of the coverage files"
-  firstCombined="${first}-combined"
-  COVERAGE_TEMP_DIR=$first yarn nyc report --nycrc-path \
-    src/dev/code_coverage/nyc_config/nyc.functional.config.js --report-dir $firstCombined
-  mv "${firstCombined}/*.json" $target || echo "--- No coverage files found at ${firstCombined}/*.json"
-  mv "${firstCombined}/**/*.json" $target || echo "--- No coverage files found at ${firstCombined}/**/*.json"
-
-  echo "--- Merge the rest of the coverage files"
-  yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.functional.config.js
-}
-
-splitMerge
-
-$seached=target/kibana-coverage
-echo "--- Grep for replaced paths, in every folder under $searched, should find none"
-grep -R $KIBANA_DIR $searched
+#echo "--- Functional: merging json files and generating the final combined report"
+#target=target/kibana-coverage/functional
+#first="target/kibana-coverage/first"
+#splitCoverage () {
+#  count=$(ls $1 | wc -l | xargs) # xargs trims whitespace
+#  echo "### total: $count"
+#
+#  mkdir -p $first
+#  half=$(($count / 2))
+#  echo "### half: $half"
+#
+#  for x in $(seq 1 $half); do
+#    mv "$1/$(ls $1 | head -1)" $first
+#  done
+#}
+#
+#echo "--- Running splitCoverage fn"
+#splitCoverage $target
+#echo "### first half:"
+#wc -l $first
+#echo "### rest"
+#wc -l $target
+#
+#splitMerge () {
+#  echo "--- Merge the first half of the coverage files"
+#  firstCombined="${first}-combined"
+#  COVERAGE_TEMP_DIR=$first yarn nyc report --nycrc-path \
+#    src/dev/code_coverage/nyc_config/nyc.functional.config.js --report-dir $firstCombined
+#  mv "${firstCombined}/*.json" $target || echo "--- No coverage files found at ${firstCombined}/*.json"
+#  mv "${firstCombined}/**/*.json" $target || echo "--- No coverage files found at ${firstCombined}/**/*.json"
+#
+#  echo "--- Merge the rest of the coverage files"
+#  yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.functional.config.js
+#}
+#
+#splitMerge
 
 # archive reports to upload as build artifacts
 echo "--- Archive and upload combined reports"

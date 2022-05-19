@@ -38,11 +38,11 @@ echo $configs
 failedConfigs=""
 results=()
 
-replacePaths () {
- for x in $(ls $1); do
-   echo "### KIBANA_DIR: $KIBANA_DIR"
-   node .buildkite/scripts/steps/code_coverage/clean_coverage_paths.js "$1/$x"
- done
+replacePaths() {
+  for x in $(ls $1); do
+    echo "### KIBANA_DIR: $KIBANA_DIR"
+    node .buildkite/scripts/steps/code_coverage/clean_coverage_paths.js "$1/$x"
+  done
 }
 
 while read -r config; do
@@ -118,8 +118,8 @@ else
   echo "--- Code coverage not found in: $KIBANA_DIR/target/kibana-coverage/functional"
 fi
 
-  echo "--- Replace paths OUTSIDE OF configs loop, FOR FUNCTIONAL COVERAGE"
-  replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
+echo "--- Replace paths OUTSIDE OF configs loop, FOR FUNCTIONAL COVERAGE"
+replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
 
 if [[ "$failedConfigs" ]]; then
   buildkite-agent meta-data set "$FAILED_CONFIGS_KEY" "$failedConfigs"
