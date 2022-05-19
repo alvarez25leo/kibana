@@ -33,42 +33,19 @@ echo "--- collect VCS Info"
 echo "--- Jest: merging coverage files and generating the final combined report"
 yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 
-#echo "--- Functional: merging json files and generating the final combined report"
-#target=target/kibana-coverage/functional
-#first="target/kibana-coverage/first"
-#splitCoverage () {
-#  count=$(ls $1 | wc -l | xargs) # xargs trims whitespace
-#  echo "### total: $count"
-#
-#  mkdir -p $first
-#  half=$(($count / 2))
-#  echo "### half: $half"
-#
-#  for x in $(seq 1 $half); do
-#    mv "$1/$(ls $1 | head -1)" $first
-#  done
-#}
-#
-#echo "--- Running splitCoverage fn"
-#splitCoverage $target
-#echo "### first half:"
-#wc -l $first
-#echo "### rest"
-#wc -l $target
-#
-#splitMerge () {
-#  echo "--- Merge the first half of the coverage files"
-#  firstCombined="${first}-combined"
-#  COVERAGE_TEMP_DIR=$first yarn nyc report --nycrc-path \
-#    src/dev/code_coverage/nyc_config/nyc.functional.config.js --report-dir $firstCombined
-#  mv "${firstCombined}/*.json" $target || echo "--- No coverage files found at ${firstCombined}/*.json"
-#  mv "${firstCombined}/**/*.json" $target || echo "--- No coverage files found at ${firstCombined}/**/*.json"
-#
-#  echo "--- Merge the rest of the coverage files"
-#  yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.functional.config.js
-#}
-#
-#splitMerge
+echo "--- Functional: merging json files and generating the final combined report"
+souce .buildkite/scripts/steps/code_coverage/merge.sh
+
+# TODO-TRE: When we do the FINAL MERGE, we may need replace our anchor (LEETRE) to the
+# KIBANA_DIR of the final merge worker so that the merge works: so they point to the
+# current source absolute path
+
+set +e
+splitCoverage
+listReports
+splitMerge
+listReports
+set -e
 
 # archive reports to upload as build artifacts
 echo "--- Archive and upload combined reports"
