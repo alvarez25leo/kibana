@@ -28,7 +28,7 @@ configs="${FTR_CONFIG:-}"
 if [[ "$configs" == "" ]]; then
   echo "--- downloading ftr test run order"
   buildkite-agent artifact download ftr_run_order.json .
-#  configs=$(jq -r '.groups[env.JOB_NUM | tonumber].names | first' ftr_run_order.json)
+  #  configs=$(jq -r '.groups[env.JOB_NUM | tonumber].names | first' ftr_run_order.json)
   configs=$(jq -r '.groups[env.JOB_NUM | tonumber].names | .[]' ftr_run_order.json)
 fi
 
@@ -37,6 +37,13 @@ echo $configs
 
 failedConfigs=""
 results=()
+
+replacePaths () {
+ for x in $(ls $1); do
+   echo "### KIBANA_DIR: $KIBANA_DIR"
+   node .buildkite/scripts/steps/code_coverage/clean_coverage_paths.js "$1/$x"
+ done
+}
 
 while read -r config; do
   if [[ ! "$config" ]]; then
@@ -69,6 +76,10 @@ while read -r config; do
       mv target/kibana-coverage/functional/coverage-final.json "target/kibana-coverage/functional/${dasherized}-server-coverage.json"
     fi
   fi
+  echo "--- Replace paths in configs loop"
+  replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
+  echo "--- Grep for replaced paths, should find none"
+  grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
 
   timeSec=$(($(date +%s) - start))
   if [[ $timeSec -gt 60 ]]; then
@@ -109,7 +120,10 @@ else
   echo "--- Code coverage not found in: $KIBANA_DIR/target/kibana-coverage/functional"
 fi
 
-printf "### ls -la target/kibana-coverage/functional: \n$(ls -la target/kibana-coverage/functional)\n"
+  echo "--- Replace paths OUTSIDE OF configs loop"
+  replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
+  echo "--- Grep for replaced paths OUTSIDE OF configs loop, should find none"
+  grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
 
 if [[ "$failedConfigs" ]]; then
   buildkite-agent meta-data set "$FAILED_CONFIGS_KEY" "$failedConfigs"
