@@ -76,7 +76,7 @@ while read -r config; do
       mv target/kibana-coverage/functional/coverage-final.json "target/kibana-coverage/functional/${dasherized}-server-coverage.json"
     fi
   fi
-  echo "--- Replace paths in configs loop"
+  echo "--- Replace paths in configs loop, for SERVER COVERAGE"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
   echo "--- Grep for replaced paths, should find none"
   grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
@@ -120,7 +120,7 @@ else
   echo "--- Code coverage not found in: $KIBANA_DIR/target/kibana-coverage/functional"
 fi
 
-  echo "--- Replace paths OUTSIDE OF configs loop"
+  echo "--- Replace paths OUTSIDE OF configs loop, FOR FUNCTIONAL COVERAGE"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
   echo "--- Grep for replaced paths OUTSIDE OF configs loop, should find none"
   grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
