@@ -43,7 +43,7 @@ yarn nyc report --nycrc-path src/dev/code_coverage/nyc_config/nyc.jest.config.js
 echo "--- Functional: merging json files and generating the final combined report"
 target=target/kibana-coverage/functional
 first="target/kibana-coverage/first"
-splitMerge () {
+splitCoverage () {
   count=$(ls $1 | wc -l | xargs) # xargs trims whitespace
   echo "### total: $count"
 
@@ -56,12 +56,13 @@ splitMerge () {
   done
 }
 
-echo "--- Running split merge of coverage files"
-splitMerge $target
-echo "### first:"
-ls  $first
+echo "--- Running splitCoverage fn"
+splitCoverage $target
+echo "### first half:"
+wc -l $first
 echo "### rest"
-ls $target
+wc -l $target
+
 
 # merge the first half
 firstCombined="${first}-combined"
