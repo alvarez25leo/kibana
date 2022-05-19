@@ -76,8 +76,8 @@ while read -r config; do
       mv target/kibana-coverage/functional/coverage-final.json "target/kibana-coverage/functional/${dasherized}-server-coverage.json"
     fi
   fi
-  echo "--- Replace paths in configs loop, for SERVER COVERAGE"
-  replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
+#  echo "--- Replace paths in configs loop, for SERVER COVERAGE"
+#  replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
 
   timeSec=$(($(date +%s) - start))
   if [[ $timeSec -gt 60 ]]; then
