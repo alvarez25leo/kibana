@@ -43,6 +43,9 @@ while read -r config; do
     continue
   fi
 
+  echo "--- Print config name"
+  echo "### config: $config"
+
   echo "--- $ node scripts/functional_tests --config $config --exclude-tag ''skipCoverage''"
   start=$(date +%s)
 
