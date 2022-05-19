@@ -78,8 +78,6 @@ while read -r config; do
   fi
   echo "--- Replace paths in configs loop, for SERVER COVERAGE"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
-  echo "--- Grep for replaced paths, should find none"
-  grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
 
   timeSec=$(($(date +%s) - start))
   if [[ $timeSec -gt 60 ]]; then
@@ -122,8 +120,6 @@ fi
 
   echo "--- Replace paths OUTSIDE OF configs loop, FOR FUNCTIONAL COVERAGE"
   replacePaths "$KIBANA_DIR/target/kibana-coverage/functional"
-  echo "--- Grep for replaced paths OUTSIDE OF configs loop, should find none"
-  grep $KIBANA_DIR "$KIBANA_DIR/target/kibana-coverage/functional"
 
 if [[ "$failedConfigs" ]]; then
   buildkite-agent meta-data set "$FAILED_CONFIGS_KEY" "$failedConfigs"
